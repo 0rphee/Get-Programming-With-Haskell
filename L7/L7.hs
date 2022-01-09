@@ -13,10 +13,9 @@ myTakeClean a b = myTakeCrude (a-1) b []
 
 -- Way simpler, way better
 myTake2 :: Int -> [a] -> [a]
-myTake2 n list = final
-    where final = if n == length list
-                  then list
-                  else myTake2 n (init list)
+myTake2 n list = if n == length list
+                 then list
+                 else myTake2 n (init list)
 
 -- 7.3 Your first recursive function: greatest common divisor
 mygcd a b = if remnd == 0
