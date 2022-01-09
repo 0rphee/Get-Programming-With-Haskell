@@ -27,4 +27,3 @@ finalExampleUrlBuilder = getRequestUrl "https://example.com" "1337hAsk3ll" "book
 
 -- 5.2.1 Partial application: making closures simple
 add4 a b c d = a + b + c + d
-
