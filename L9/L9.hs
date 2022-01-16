@@ -27,3 +27,6 @@ myPalindrome str = fstring == reverse fstring
 -- Q 9.3 harmonic series 1/1 + 1/2 ...
 harmonic n = sum series
     where series =  map (1 /) [1..n]
+
+harmonic2 n = foldl (+) 0 series
+    where series = map (1/) [1..n]
