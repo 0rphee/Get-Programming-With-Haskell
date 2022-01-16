@@ -1,4 +1,5 @@
 -- Lesson 9: Higher order functions
+import Data.Char (toLower)
 
 operateOnList :: (t -> a) -> [t] -> [a]
 operateOnList _  []     = []
@@ -17,8 +18,12 @@ myProduct [x] = x
 myProduct (x:xs) = x * myProduct xs
 
 -- Q 9.1 myElem with filter and len
-myElem elem list = (length $ filter (elem==) list) > 0
+myElem elem list = length (filter (elem==) list) > 0
 
--- Q 9.2 palindrome with filter and map
+-- Q 9.2 palindrome with filter and map, test: "A man a plan a canal Panama"
 myPalindrome str = fstring == reverse fstring
-    where fstring = map upper (filter (==' ') str)
+    where fstring = map toLower (filter (/=' ') str)
+
+-- Q 9.3 harmonic series 1/1 + 1/2 ...
+harmonic n = sum series
+    where series =  map (1 /) [1..n]
