@@ -43,3 +43,27 @@ canDonateTo _ (BloodType AB _)              = True
 canDonateTo (BloodType A _) (BloodType A _) = True 
 canDonateTo (BloodType B _) (BloodType B _) = True 
 canDonateTo _ _ = False 
+
+-- Listing 12.12 Patient v.1
+data Patient = Patient Name Sex Int Int Int BloodType
+
+johnDoe :: Patient
+johnDoe = Patient (Name "John" "Doe") Male 30 74 200 (BloodType AB Pos)
+
+janeESmith :: Patient
+janeESmith = Patient (NameWMiddle "Jane" "Elizabeth" "Smith") Female 28 62 140 (BloodType O Neg)
+
+getName :: Patient -> Name
+getName (Patient n  _ _ _ _ _) = n
+
+-- getAge, getBloodType, etc
+
+-- Listing 12.14 Patient v.2 with record syntax
+
+data Patient2 = Patient2 {name :: Name,
+                          sex :: Sex,
+                          age :: Int,
+                          height :: Int,
+                          weight :: Int,
+                          bloodtype :: BloodType}
+
