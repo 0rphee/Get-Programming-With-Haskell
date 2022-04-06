@@ -25,7 +25,7 @@ file4 = [(26, 219.8), (27, 220.5), (28, 223.8)
 ts1 = fileToTS file1
 ts2 = fileToTS file2
 ts3 = fileToTS file3
-
+ts4 = fileToTS file4
 
 data TS a = TS [Int] [Maybe a]
 
@@ -80,7 +80,7 @@ instance Monoid (TS a) where
     mappend =  (<>)
 
 tsAll :: TS Double 
-tsAll = mconcat [ts1,ts2,ts3]
+tsAll = mconcat [ts1,ts2,ts3,ts4]
 
 -- 20.3 Permorming calculations on your time series
 mean :: (Real a) => [a] -> Double 
@@ -124,3 +124,20 @@ minTS = compareTS min
 maxTS :: Ord a=> TS a -> Maybe (Int, Maybe a)
 maxTS = compareTS max 
 
+diffPair :: Num a => Maybe a -> Maybe a -> Maybe a
+diffPair Nothing _ = Nothing
+diffPair _ Nothing = Nothing
+diffPair (Just x) (Just y) = Just (x - y)
+
+diffTS :: Num a => TS a -> TS a
+diffTS (TS [] []) = TS [] []
+diffTS (TS times values) = TS times (Nothing:diffValues)
+    where shiftValues = tail values
+          diffValues = zipWith diffPair shiftValues values
+
+-- 20.4.1 Moving average
+meanMaybe vals = if any (==Nothing) vals
+                 then  Nothing
+                 else (Just avg)
+    where avg = mean (map fromJust vals)
+movingAverageTS :: (Real a) => TS a -> Int -> TS Double 
