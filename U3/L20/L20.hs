@@ -72,26 +72,26 @@ combineTS (TS t1 v1) (TS t2 v2) = TS completeTimes combinedValues
           updatedMap = foldl insertMaybePair tvMap (zip t2 v2)
           combinedValues = map (\v -> Map.lookup v updatedMap) completeTimes
 
-instance Semigroup (TS a) where 
+instance Semigroup (TS a) where
     (<>) = combineTS
 
 instance Monoid (TS a) where
     mempty = TS [] []
     mappend =  (<>)
 
-tsAll :: TS Double 
+tsAll :: TS Double
 tsAll = mconcat [ts1,ts2,ts3,ts4]
 
 -- 20.3 Permorming calculations on your time series
-mean :: (Real a) => [a] -> Double 
+mean :: (Real a) => [a] -> Double
 mean xs = total/count
     where total = (realToFrac . sum) xs
           count = (realToFrac . length) xs
 
-meanTS :: (Real a) => TS a -> Maybe Double 
-meanTS (TS _ []) = Nothing 
+meanTS :: (Real a) => TS a -> Maybe Double
+meanTS (TS _ []) = Nothing
 meanTS (TS times values) = if all (== Nothing) values
-                           then Nothing 
+                           then Nothing
                            else Just avg
     where justVals = filter isJust values
           cleanVals = map fromJust justVals
@@ -110,19 +110,19 @@ makeTSCompare func = newFunc
                                                   else (i2,Just val2)
 
 compareTS :: Eq a => (a->a->a)->TS a-> Maybe (Int, Maybe a)
-compareTS func (TS [] []) = Nothing 
+compareTS func (TS [] []) = Nothing
 compareTS func (TS times values) = if all (== Nothing) values
-                                   then Nothing 
+                                   then Nothing
                                    else Just best
     where pairs = zip times values
           best = foldl (makeTSCompare func) (0,Nothing) pairs
 
 minTS :: Ord a=> TS a -> Maybe (Int, Maybe a)
-minTS = compareTS min 
+minTS = compareTS min
 
 
 maxTS :: Ord a=> TS a -> Maybe (Int, Maybe a)
-maxTS = compareTS max 
+maxTS = compareTS max
 
 diffPair :: Num a => Maybe a -> Maybe a -> Maybe a
 diffPair Nothing _ = Nothing
@@ -136,8 +136,23 @@ diffTS (TS times values) = TS times (Nothing:diffValues)
           diffValues = zipWith diffPair shiftValues values
 
 -- 20.4.1 Moving average
-meanMaybe vals = if any (==Nothing) vals
+meanMaybe :: Real a => [Maybe a] -> Maybe Double
+meanMaybe vals = if any (== Nothing) vals
                  then  Nothing
-                 else (Just avg)
+                 else Just avg
     where avg = mean (map fromJust vals)
-movingAverageTS :: (Real a) => TS a -> Int -> TS Double 
+
+movingAvg :: (Real a) => [Maybe a] -> Int -> [Maybe Double]
+movingAvg [] _ = []
+movingAvg vals n = if length nextVals == n
+                   then meanMaybe nextVals:movingAvg restVals n
+                   else []
+    where nextVals = take n vals
+          restVals = tail vals
+
+movingAverageTS :: Real a => TS a -> Int -> TS Double
+movingAverageTS (TS [] []) n = TS [] []
+movingAverageTS (TS times values) n = TS times smoothedValues
+    where ma = movingAvg values n
+          nothings = replicate (n `div` 2) Nothing 
+          smoothedValues = mconcat [nothings,ma,nothings]
