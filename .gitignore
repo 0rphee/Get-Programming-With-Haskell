@@ -21,3 +21,4 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 U4/L21/pizza
+U4/L22/sum
