@@ -22,3 +22,5 @@ cabal.project.local~
 .ghc.environment.*
 U4/L21/pizza
 U4/L22/sum
+U4/L22/simple_calc
+U4/L22/sum_lazy
